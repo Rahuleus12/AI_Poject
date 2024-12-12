@@ -1,0 +1,5 @@
+flask
+pandas
+request
+render_template
+jsonify
