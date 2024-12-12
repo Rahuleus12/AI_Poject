@@ -14,4 +14,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 5000
 
 # Step 5: Specify the command to run the Python script
-CMD ["python3", "analysis.py"]
+CMD ["python3", "Flask_Sales_App.py"]
