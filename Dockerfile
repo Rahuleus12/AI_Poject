@@ -1,17 +1,17 @@
-#Using base Python
+# Use a lightweight base Python image
 FROM python:3.12-slim
 
-# Step 2: Set the working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Step 3: Copy the current directory contents to the container
+# Copy the application code to the container
 COPY . .
 
-# Step 4: Install Python dependencies
+# Install Python dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-#Expose Flask port
+# Expose the Flask application port
 EXPOSE 5000
 
-# Step 5: Specify the command to run the Python script
-CMD ["python3", "Flask_Sales_App.py"]
+# Specify the command to run the Flask application
+CMD ["python", "etl_pipeline_flask.py"]

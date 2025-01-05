@@ -1,16 +1,15 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template_string
 import os
 import pandas as pd
 
 app = Flask(__name__)
 
 # Directory and file paths
-DATA_DIR = 'Data'
+DATA_DIR = 'data'
 CUSTOMERS_FILE = os.path.join(DATA_DIR, 'Customers_Data.csv')
 PRODUCTS_FILE = os.path.join(DATA_DIR, 'Products_Data.csv')
 SALES_FILE = os.path.join(DATA_DIR, 'Sales_Data.csv')
 
-# Example ETL pipeline function
 def etl_pipeline():
     try:
         # Ensure data directory exists
@@ -41,7 +40,7 @@ def etl_pipeline():
         output_file = os.path.join(DATA_DIR, 'Transformed_Sales_Data.csv')
         merged_df.to_csv(output_file, index=False)
 
-        return {"status": "success", "message": f"Data processed and saved to {output_file}"}
+        return {"status": "success", "message": f"Data processed and saved to {output_file}", "data": merged_df}
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
@@ -49,10 +48,30 @@ def etl_pipeline():
 @app.route('/run-etl', methods=['GET'])
 def run_etl():
     result = etl_pipeline()
-    return jsonify(result)
+    if result["status"] == "success":
+        data_html = result["data"].to_html(classes='table table-bordered', index=False)
+        return render_template_string("""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>ETL Pipeline Result</title>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
+        </head>
+        <body>
+            <div class="container mt-5">
+                <h1>ETL Pipeline Result</h1>
+                <div class="mt-4">
+                    {{ data_html|safe }}
+                </div>
+            </div>
+        </body>
+        </html>
+        """, data_html=data_html)
+    else:
+        return jsonify(result)
 
 # Run the Flask app
 if __name__ == '__main__':
     # Ensure the data directory exists for testing
     os.makedirs(DATA_DIR, exist_ok=True)
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000,debug=True)

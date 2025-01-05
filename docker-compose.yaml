@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  flask_app:
+    build:
+      context: .  # Path to tshe directory containing the Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"  # Maps port 5000 on the host to port 5000 in the container
+    volumes:
+      - .:/app  # Mount the current directory to `/app` inside the container (optional)
+    environment:
+      - FLASK_ENV=development  # Set Flask environment variables
+    stdin_open: true
+    tty: true
